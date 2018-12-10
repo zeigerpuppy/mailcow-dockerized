@@ -50,7 +50,30 @@ done
 
 [ ! -f ./data/conf/rspamd/override.d/worker-controller-password.inc ] && echo '# Placeholder' > ./data/conf/rspamd/override.d/worker-controller-password.inc
 
+
+# adding variable which we'll use for TCP vs sockets
+PS3="Please choose an option for networking type: "
+select net_option in TCP_IP unix_socket
+do
+    case $net_option in
+        TCP_IP)
+            echo "TCP/IP selected"
+            CONNECT_METHOD=tcp
+            break;;
+        unix_socket)
+            echo "unix sockets selected"
+            CONNECT_METHOD=socket
+            break;;
+     esac
+done
+
+
 cat << EOF > mailcow.conf
+# -----------------------------
+# Connect Method for chosing TCP/socket
+# -----------------------------
+CONNECT_METHOD=${CONNECT_METHOD}
+
 # ------------------------------
 # mailcow web ui configuration
 # ------------------------------

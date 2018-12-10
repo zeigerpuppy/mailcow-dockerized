@@ -24,6 +24,7 @@ services:
         - mysql-socket-vol-1:/var/run/mysqld/
         - ./data/conf/mysql/:/etc/mysql/conf.d/:ro
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - TZ=${TZ}
         - MYSQL_ROOT_PASSWORD=${DBROOT}
         - MYSQL_DATABASE=${DBNAME}
@@ -45,6 +46,7 @@ services:
         - redis-vol-1:/data/
       restart: always
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - TZ=${TZ}
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
@@ -60,6 +62,7 @@ services:
       restart: always
       tty: true
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - TZ=${TZ}
         - SKIP_CLAMD=${SKIP_CLAMD:-n}
       volumes:
@@ -78,6 +81,7 @@ services:
       depends_on:
         - nginx-mailcow
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - TZ=${TZ}
       volumes:
         - ./data/conf/rspamd/custom/:/etc/rspamd/custom
@@ -112,6 +116,7 @@ services:
         - ./data/conf/phpfpm/php-conf.d/upload.ini:/usr/local/etc/php/conf.d/upload.ini
         - ./data/conf/phpfpm/php-conf.d/other.ini:/usr/local/etc/php/conf.d/zzz-other.ini
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - LOG_LINES=${LOG_LINES:-9999}
         - TZ=${TZ}
         - DBNAME=${DBNAME}
@@ -141,6 +146,7 @@ services:
       image: mailcow/sogo:1.44
       build: ./data/Dockerfiles/sogo
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
         - DBPASS=${DBPASS}
@@ -177,6 +183,7 @@ services:
         - rspamd-vol-1:/var/lib/rspamd
         - mysql-socket-vol-1:/var/run/mysqld/
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - LOG_LINES=${LOG_LINES:-9999}
         - DBNAME=${DBNAME}
         - DBUSER=${DBUSER}
@@ -216,6 +223,7 @@ services:
         - rspamd-vol-1:/var/lib/rspamd
         - mysql-socket-vol-1:/var/run/mysqld/
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - LOG_LINES=${LOG_LINES:-9999}
         - TZ=${TZ}
         - DBNAME=${DBNAME}
@@ -241,6 +249,8 @@ services:
       restart: always
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
+      environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
       networks:
         mailcow-network:
           aliases:
@@ -264,6 +274,7 @@ services:
         until ping rspamd -c1 > /dev/null; do sleep 1; done &&
         exec nginx -g 'daemon off;'"
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - HTTPS_PORT=${HTTPS_PORT:-443}
         - HTTP_PORT=${HTTP_PORT:-80}
         - MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
@@ -296,6 +307,7 @@ services:
       dns:
         - ${IPV4_NETWORK:-172.22.1}.254
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - LOG_LINES=${LOG_LINES:-9999}
         - ADDITIONAL_SAN=${ADDITIONAL_SAN}
         - MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
@@ -330,6 +342,7 @@ services:
       restart: always
       privileged: true
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - TZ=${TZ}
         - IPV4_NETWORK=${IPV4_NETWORK:-172.22.1}
         - IPV6_NETWORK=${IPV6_NETWORK:-fd4d:6169:6c63:6f77::/64}
@@ -352,6 +365,7 @@ services:
         - mysql-socket-vol-1:/var/run/mysqld/
       restart: always
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - LOG_LINES=${LOG_LINES:-9999}
         - TZ=${TZ}
         - DBNAME=${DBNAME}
@@ -379,6 +393,7 @@ services:
       build: ./data/Dockerfiles/dockerapi
       oom_kill_disable: true
       environment:
+        - CONNECT_METHOD=${CONNECT_METHOD:-socket}
         - TZ=${TZ}
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock:ro

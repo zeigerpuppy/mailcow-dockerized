@@ -1,7 +1,7 @@
 # mailcow: dockerized - 🐮 + 🐋 = 💕
 
-This fork of mailcow-dockerized is using TCP/IP instead of unix sockets for inter-container communications
-It is not supported and may be broken!
+**This fork of mailcow-dockerized is using TCP/IP instead of unix sockets for inter-container communications
+It is not supported and may be broken!**
 
 ## Want to support mailcow?
 

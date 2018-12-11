@@ -4,7 +4,7 @@ set -e
 function array_by_comma { local IFS=","; echo "$*"; }
 
 # Wait for containers
-while ! mysqladmin status --socket=/var/run/mysqld/mysqld.sock -u${DBUSER} -p${DBPASS} --silent; do
+while ! mysqladmin status ${DBCONN} -u${DBUSER} -p${DBPASS} --silent; do
   echo "Waiting for SQL..."
   sleep 2
 done
@@ -25,14 +25,15 @@ php -c /usr/local/etc/php -f /web/inc/init_db.inc.php
 # Migrate domain map
 declare -a DOMAIN_ARR
 redis-cli -h redis-mailcow DEL DOMAIN_MAP
+
 while read line
 do
   DOMAIN_ARR+=("$line")
-done < <(mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SELECT domain FROM domain" -Bs)
+done < <(mysql ${DBCONN} -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SELECT domain FROM domain" -Bs)
 while read line
 do
   DOMAIN_ARR+=("$line")
-done < <(mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SELECT alias_domain FROM alias_domain" -Bs)
+done < <(mysql ${DBCONN} -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SELECT alias_domain FROM alias_domain" -Bs)
 
 if [[ ! -z ${DOMAIN_ARR} ]]; then
 for domain in "${DOMAIN_ARR[@]}"; do
@@ -57,8 +58,10 @@ if [[ ${API_ALLOW_FROM} != "invalid" ]] && \
     fi
   done
   VALIDATED_IPS=$(array_by_comma ${VALIDATED_API_ALLOW_FROM_ARR[*]})
+
+
   if [[ ! -z ${VALIDATED_IPS} ]]; then
-    mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} << EOF
+    mysql ${DBCONN} -u ${DBUSER} -p${DBPASS} ${DBNAME} << EOF
 DELETE FROM api;
 INSERT INTO api (api_key, active, allow_from) VALUES ("${API_KEY}", "1", "${VALIDATED_IPS}");
 EOF

@@ -147,7 +147,7 @@ else
 fi
 
 log_f "Waiting for database... "
-while ! mysqladmin status --socket=/var/run/mysqld/mysqld.sock -u${DBUSER} -p${DBPASS} --silent; do
+while ! mysqladmin status ${DBCONN} -u${DBUSER} -p${DBPASS} --silent; do
   sleep 2
 done
 log_f "Initializing, please wait... "
@@ -197,15 +197,15 @@ while true; do
   log_f "Waiting for domain table... " no_nl
   while [[ -z ${DOMAIN_TABLE} ]]; do
     curl --silent http://nginx/ >/dev/null 2>&1
-    DOMAIN_TABLE=$(mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SHOW TABLES LIKE 'domain'" -Bs)
+    DOMAIN_TABLE=$(mysql ${DBCONN} -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SHOW TABLES LIKE 'domain'" -Bs)
     [[ -z ${DOMAIN_TABLE} ]] && sleep 10
   done
   log_f "OK" no_date
 
   while read domains; do
-    SQL_DOMAIN_ARR+=("${domains}")
-  done < <(mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SELECT domain FROM domain WHERE backupmx=0" -Bs)
-
+    SQL_DOMAIN_ARR+=("${domains}")  
+  done < <(mysql ${DBCONN} -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SELECT domain FROM domain WHERE backupmx=0" -Bs)
+  
   for SQL_DOMAIN in "${SQL_DOMAIN_ARR[@]}"; do
     for SUBDOMAIN in "${ADDITIONAL_WC_ARR[@]}"; do
       if [[  "${SUBDOMAIN}.${SQL_DOMAIN}" == ${MAILCOW_HOSTNAME} ]]; then

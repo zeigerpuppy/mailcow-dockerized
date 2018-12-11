@@ -2,7 +2,7 @@
 set -e
 
 # Wait for MySQL to warm-up
-while ! mysqladmin status --socket=/var/run/mysqld/mysqld.sock -u${DBUSER} -p${DBPASS} --silent; do
+while ! mysqladmin status ${DBCONN} -u${DBUSER} -p${DBPASS} --silent; do
   echo "Waiting for database to come up..."
   sleep 2
 done
@@ -25,7 +25,7 @@ DBPASS=$(echo ${DBPASS} | sed 's/"/\\"/g')
 
 # Create quota dict for Dovecot
 cat <<EOF > /usr/local/etc/dovecot/sql/dovecot-dict-sql-quota.conf
-connect = "host=/var/run/mysqld/mysqld.sock dbname=${DBNAME} user=${DBUSER} password=${DBPASS}"
+connect = "host=${DBHOST} dbname=${DBNAME} user=${DBUSER} password=${DBPASS}"
 map {
   pattern = priv/quota/storage
   table = quota2
@@ -42,7 +42,7 @@ EOF
 
 # Create dict used for sieve pre and postfilters
 cat <<EOF > /usr/local/etc/dovecot/sql/dovecot-dict-sql-sieve_before.conf
-connect = "host=/var/run/mysqld/mysqld.sock dbname=${DBNAME} user=${DBUSER} password=${DBPASS}"
+connect = "host=${DBHOST} dbname=${DBNAME} user=${DBUSER} password=${DBPASS}"
 map {
   pattern = priv/sieve/name/\$script_name
   table = sieve_before
@@ -64,7 +64,7 @@ map {
 EOF
 
 cat <<EOF > /usr/local/etc/dovecot/sql/dovecot-dict-sql-sieve_after.conf
-connect = "host=/var/run/mysqld/mysqld.sock dbname=${DBNAME} user=${DBUSER} password=${DBPASS}"
+connect = "host=${DBHOST} dbname=${DBNAME} user=${DBUSER} password=${DBPASS}"
 map {
   pattern = priv/sieve/name/\$script_name
   table = sieve_after
@@ -89,7 +89,7 @@ EOF
 # Create userdb dict for Dovecot
 cat <<EOF > /usr/local/etc/dovecot/sql/dovecot-dict-sql-userdb.conf
 driver = mysql
-connect = "host=/var/run/mysqld/mysqld.sock dbname=${DBNAME} user=${DBUSER} password=${DBPASS}"
+connect = "host=${DBHOST} dbname=${DBNAME} user=${DBUSER} password=${DBPASS}"
 user_query = SELECT CONCAT(JSON_UNQUOTE(JSON_EXTRACT(attributes, '$.mailbox_format')), mailbox_path_prefix, '%d/%n/:VOLATILEDIR=/var/volatile/%u') AS mail, 5000 AS uid, 5000 AS gid, concat('*:bytes=', quota) AS quota_rule FROM mailbox WHERE username = '%u' AND active = '1'
 iterate_query = SELECT username FROM mailbox WHERE active='1';
 EOF
@@ -97,7 +97,7 @@ EOF
 # Create pass dict for Dovecot
 cat <<EOF > /usr/local/etc/dovecot/sql/dovecot-dict-sql-passdb.conf
 driver = mysql
-connect = "host=/var/run/mysqld/mysqld.sock dbname=${DBNAME} user=${DBUSER} password=${DBPASS}"
+connect = "host=${DBHOST} dbname=${DBNAME} user=${DBUSER} password=${DBPASS}"
 default_pass_scheme = SSHA256
 password_query = SELECT password FROM mailbox WHERE active = '1' AND username = '%u' AND domain IN (SELECT domain FROM domain WHERE domain='%d' AND active='1') AND JSON_EXTRACT(attributes, '$.force_pw_update') NOT LIKE '%%1%%'
 EOF
@@ -150,8 +150,8 @@ touch /etc/crontab /etc/cron.*/*
 
 # Clean stopped imapsync jobs
 rm -f /tmp/imapsync_busy.lock
-IMAPSYNC_TABLE=$(mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SHOW TABLES LIKE 'imapsync'" -Bs)
-[[ ! -z ${IMAPSYNC_TABLE} ]] && mysql --socket=/var/run/mysqld/mysqld.sock -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "UPDATE imapsync SET is_running='0'"
+IMAPSYNC_TABLE=$(mysql ${DBCONN} -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SHOW TABLES LIKE 'imapsync'" -Bs)
+[[ ! -z ${IMAPSYNC_TABLE} ]] && mysql ${DBCONN} -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "UPDATE imapsync SET is_running='0'"
 
 # Envsubst maildir_gc
 envsubst < /usr/local/bin/maildir_gc.sh > /usr/local/bin/maildir_gc.sh

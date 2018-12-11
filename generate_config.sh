@@ -67,12 +67,21 @@ do
      esac
 done
 
+if [[ "$CONNECT_METHOD" == "socket" ]]; then
+    DBHOST="/var/run/mysqld/mysqld.sock"
+    DBCONN="--socket=${DBHOST}"
+else
+    DBHOST="mysql"	
+    DBCONN="-h ${DBHOST}"
+fi
 
 cat << EOF > mailcow.conf
 # -----------------------------
 # Connect Method for chosing TCP/socket
 # -----------------------------
 CONNECT_METHOD=${CONNECT_METHOD}
+DBHOST=${DBHOST}
+DBCONN=${DBCONN}
 
 # ------------------------------
 # mailcow web ui configuration

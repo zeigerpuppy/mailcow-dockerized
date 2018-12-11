@@ -35,7 +35,11 @@ $redis->connect('redis-mailcow', 6379);
 // $mins -= $hrs * 60;
 // $offset = sprintf('%+d:%02d', $hrs*$sgn, $mins);
 
-$dsn = $database_type . ":unix_socket=" . $database_sock . ";dbname=" . $database_name;
+if ($CONNECT_METHOD == "socket") {
+  $dsn = $database_type . ":unix_socket=" . $database_sock . ";dbname=" . $database_name;
+} else {
+  $dsn = $database_type . ':host=' . $DBHOST . ';dbname=' . $database_name;
+}
 $opt = [
   PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
   PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

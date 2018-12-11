@@ -1,5 +1,8 @@
 # mailcow: dockerized - 🐮 + 🐋 = 💕
 
+**This fork of mailcow-dockerized is using TCP/IP instead of unix sockets for inter-container communications
+It is not supported and may be broken!**
+
 ## Want to support mailcow?
 
 Donate via **PayPal** [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JWBSYHF4SMC68) or via **Liberapay** [![Liberapay.com](https://mailcow.email/img/lp.png)](https://liberapay.com/mailcow)

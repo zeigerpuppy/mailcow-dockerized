@@ -293,7 +293,7 @@ function quarantine($_action, $_data = null) {
             continue;
           }
           $curl = curl_init();
-          curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');
+          if($CONNECT_METHOD == "socket"){curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');}
           curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
           curl_setopt($curl, CURLOPT_POST, 1);
           curl_setopt($curl, CURLOPT_TIMEOUT, 30);
@@ -315,7 +315,7 @@ function quarantine($_action, $_data = null) {
             }
             curl_close($curl);
             $curl = curl_init();
-            curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');
+            if($CONNECT_METHOD == "socket"){curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');}
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($curl, CURLOPT_POST, 1);
             curl_setopt($curl, CURLOPT_TIMEOUT, 30);

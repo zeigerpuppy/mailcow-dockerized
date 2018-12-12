@@ -70,9 +70,11 @@ done
 if [[ "$CONNECT_METHOD" == "socket" ]]; then
     DBHOST="/var/run/mysqld/mysqld.sock"
     DBCONN="--socket=${DBHOST}"
+    RSCONN_SCK="--unix-socket /var/lib/rspamd/rspamd.sock"
 else
     DBHOST="mysql"	
     DBCONN="-h ${DBHOST}"
+    RSCONN_SCK=""
 fi
 
 cat << EOF > mailcow.conf
@@ -82,6 +84,7 @@ cat << EOF > mailcow.conf
 CONNECT_METHOD=${CONNECT_METHOD}
 DBHOST=${DBHOST}
 DBCONN=${DBCONN}
+RSCONN_SCK=${DBCONN_CRL}
 
 # ------------------------------
 # mailcow web ui configuration

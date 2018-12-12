@@ -165,6 +165,12 @@ unbound_checks() {
   return 1
 }
 
+if [[ "$CONNECT_METHOD" == "socket" ]]; then
+  DBCONN_NG="-s $DBHOST"
+else
+  DBCONN_NG="-H $DBHOST"
+fi
+
 mysql_checks() {
   err_count=0
   diff_c=0
@@ -175,8 +181,8 @@ mysql_checks() {
     cat /dev/null > /tmp/mysql-mailcow
     host_ip=$(get_container_ip mysql-mailcow)
     err_c_cur=${err_count}
-    /usr/lib/nagios/plugins/check_mysql -s /var/run/mysqld/mysqld.sock -u ${DBUSER} -p ${DBPASS} -d ${DBNAME} 2>> /tmp/mysql-mailcow 1>&2; err_count=$(( ${err_count} + $? ))
-    /usr/lib/nagios/plugins/check_mysql_query -s /var/run/mysqld/mysqld.sock -u ${DBUSER} -p ${DBPASS} -d ${DBNAME} -q "SELECT COUNT(*) FROM information_schema.tables" 2>> /tmp/mysql-mailcow 1>&2; err_count=$(( ${err_count} + $? ))
+    /usr/lib/nagios/plugins/check_mysql ${DBCONN_NG} -u ${DBUSER} -p ${DBPASS} -d ${DBNAME} 2>> /tmp/mysql-mailcow 1>&2; err_count=$(( ${err_count} + $? ))
+    /usr/lib/nagios/plugins/check_mysql_query ${DBCONN_NG} -u ${DBUSER} -p ${DBPASS} -d ${DBNAME} -q "SELECT COUNT(*) FROM information_schema.tables" 2>> /tmp/mysql-mailcow 1>&2; err_count=$(( ${err_count} + $? ))
     [ ${err_c_cur} -eq ${err_count} ] && [ ! $((${err_count} - 1)) -lt 0 ] && err_count=$((${err_count} - 1)) diff_c=1
     [ ${err_c_cur} -ne ${err_count} ] && diff_c=$(( ${err_c_cur} - ${err_count} ))
     progress "MySQL/MariaDB" ${THRESHOLD} $(( ${THRESHOLD} - ${err_count} )) ${diff_c}
@@ -332,7 +338,7 @@ rspamd_checks() {
     cat /dev/null > /tmp/rspamd-mailcow
     host_ip=$(get_container_ip rspamd-mailcow)
     err_c_cur=${err_count}
-    SCORE=$(/usr/bin/curl -s --data-binary @- --unix-socket /var/lib/rspamd/rspamd.sock http://rspamd/scan -d '
+    SCORE=$(/usr/bin/curl -s --data-binary @- ${RSCONN_SCK} http://rspamd/rspamd.sock -d '
 To: null@localhost
 From: watchdog@localhost
 

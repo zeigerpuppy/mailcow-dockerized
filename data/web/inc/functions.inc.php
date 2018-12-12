@@ -1418,7 +1418,7 @@ function get_logs($container, $lines = false) {
   }
   if ($container == "rspamd-history") {
     $curl = curl_init();
-    curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');
+    if($CONNECT_METHOD == "socket"){curl_setopt($curl, CURLOPT_UNIX_SOCKET_PATH, '/var/lib/rspamd/rspamd.sock');}
     if (!is_numeric($lines)) {
       list ($from, $to) = explode('-', $lines);
       curl_setopt($curl, CURLOPT_URL,"http://rspamd/history?from=" . intval($from) . "&to=" . intval($to));

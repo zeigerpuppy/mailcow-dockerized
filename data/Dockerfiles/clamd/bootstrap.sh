@@ -10,6 +10,7 @@ fi
 mkdir -p /var/log/clamav
 touch /var/log/clamav/clamd.log /var/log/clamav/freshclam.log
 chown -R clamav:clamav /var/log/clamav/
+touch /dev/console
 chown root:tty /dev/console
 chmod g+rw /dev/console
 

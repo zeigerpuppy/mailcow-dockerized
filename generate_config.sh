@@ -87,6 +87,27 @@ DBCONN=${DBCONN}
 RSCONN_SCK=${DBCONN_CRL}
 
 # ------------------------------
+# Set Hostnames for machines
+# ------------------------------
+# allows setting names for machines more flexibly
+# not fully implemented yet in config files
+HOSTNAME_UNBOUND=unbound-mailcow
+# mysql host is set with $DBHOST
+HOSTNAME_REDIS=redis-mailcow
+HOSTNAME_CLAMD=clamd-mailcow
+HOSTNAME_RSPAMD=rspamd-mailcow
+HOSTNAME_PHPFPM=phpfpm-mailcow
+HOSTNAME_SOGO=sogo-mailcow
+HOSTNAME_DOVECOT=dovecot-mailcow
+HOSTNAME_POSTFIX=postfix-mailcow
+HOSTNAME_MEMCACHED=memcached-mailcow
+HOSTNAME_NGINX=nginx-mailcow
+HOSTNAME_ACME=acme-mailcow
+HOSTNAME_NETFILTER=nefilter-mailcow
+HOSTNAME_WATCHDOG=watchdow-mailcow
+HOSTNAME_DOCKERAPI=dockerapi-mailcow
+
+# ------------------------------
 # mailcow web ui configuration
 # ------------------------------
 # example.org is _not_ a valid hostname, use a fqdn here.

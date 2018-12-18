@@ -99,6 +99,31 @@ in most cases, the URL was also provided but we had to update the port
 `data/Dockerfiles/postfix/postfix.sh`
   - [x] updated `unix:/var/run/mysqld/mysqld.sock` to generic `${DBHOST_PF}`
 
+## further mods to generalise redis connections
+
+- [x] added `$HOSTNAME_REDIS` variable to `generate_config.sh`
+  - [ ] also added variables for other hosts but not used yet
+
+edited following files to replace `redis-mailcow` with `$HOSTNAME_REDIS`
+  - [x] `data/web/inc/prerequisites.inc.php`
+  - [x] `data/web/autodiscover.php`
+  - [x] `data/Dockerfiles/dovecot/syslog-ng.conf`
+  - [x] `data/Dockerfiles/postfix/syslog-ng.conf`
+  - [x] `data/Dockerfiles/sogo/syslog-ng.conf`
+  - [x] `data/Dockerfiles/phpfpm/docker-entrypoint.sh
+  - [x] `data/conf/rspamd/dynmaps/forwardinghosts.php`
+  - [x] `data/conf/rspamd/meta_exporter/pipe.php`
+ 
+## allow renaming of docker containers
+
+e.g. the following have `redis-mailcow` hard-coded as a name
+
+  - [ ] `helper-scripts/backup_and_restore.sh`
+  - [ ] `helper-scripts/backup_and_restore.sh`
+  - [ ] `helper-scripts/backup_and_restore.sh`
+  - [ ] `helper-scripts/reset-learns.sh`
+  - [ ] `helper-scripts/nextcloud.sh`
+
 ## exposing ports
 
 - rspamd
@@ -106,5 +131,9 @@ in most cases, the URL was also provided but we had to update the port
 
 ## ToDo
 
+- [ ] check for hard-coded IP addresses, e.g. in `data/Dockerfiles/dovecot/syslog`: 
+  - `filter f_not_watchdog { not message ("172\.22\.1\.248): };`
+  - [ ] these should be replaced with HOSTNAMES
+- [ ] check instances of `redis.sock`
 - [ ] check for other instances of `mysqld.sock`
 - [ ] check if we have defined the variables correctly in .php files

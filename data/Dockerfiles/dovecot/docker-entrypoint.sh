@@ -140,6 +140,7 @@ chmod 640 /usr/local/etc/dovecot/sql/*.conf
 chown -R vmail:vmail /var/vmail/sieve
 chown -R vmail:vmail /var/volatile
 adduser vmail tty
+touch /dev/console
 chmod g+rw /dev/console
 
 # Fix more than 1 hardlink issue

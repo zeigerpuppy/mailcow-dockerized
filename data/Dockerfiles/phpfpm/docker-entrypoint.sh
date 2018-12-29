@@ -9,13 +9,13 @@ while ! mysqladmin status ${DBCONN} -u${DBUSER} -p${DBPASS} --silent; do
   sleep 2
 done
 
-until [[ $(redis-cli -h $HOSTNAME_REDIS PING) == "PONG" ]]; do
+until [[ $(redis-cli -h ${HOSTNAME_REDIS} PING) == "PONG" ]]; do
   echo "Waiting for Redis..."
   sleep 2
 done
 
-if [[ -z $(redis-cli --raw -h $HOSTNAME_REDIS GET Q_RELEASE_FORMAT) ]]; then
-  redis-cli --raw -h $HOSTNAME_REDIS SET Q_RELEASE_FORMAT raw
+if [[ -z $(redis-cli --raw -h ${HOSTNAME_REDIS} GET Q_RELEASE_FORMAT) ]]; then
+  redis-cli --raw -h ${HOSTNAME_REDIS} SET Q_RELEASE_FORMAT raw
 fi
 
 # Trigger db init
@@ -24,7 +24,7 @@ php -c /usr/local/etc/php -f /web/inc/init_db.inc.php
 
 # Migrate domain map
 declare -a DOMAIN_ARR
-redis-cli -h $HOSTNAME_REDIS DEL DOMAIN_MAP
+redis-cli -h ${HOSTNAME_REDIS} DEL DOMAIN_MAP
 
 while read line
 do
@@ -37,7 +37,7 @@ done < <(mysql ${DBCONN} -u ${DBUSER} -p${DBPASS} ${DBNAME} -e "SELECT alias_dom
 
 if [[ ! -z ${DOMAIN_ARR} ]]; then
 for domain in "${DOMAIN_ARR[@]}"; do
-  redis-cli -h $HOSTNAME_REDIS HSET DOMAIN_MAP ${domain} 1
+  redis-cli -h ${HOSTNAME_REDIS} HSET DOMAIN_MAP ${domain} 1
 done
 fi
 

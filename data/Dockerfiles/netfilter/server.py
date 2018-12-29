@@ -15,7 +15,8 @@ import iptc
 
 while True:
   try:
-    r = redis.StrictRedis(host=os.getenv('IPV4_NETWORK', '172.22.1') + '.249', decode_responses=True, port=6379, db=0)
+#    r = redis.StrictRedis(host=os.getenv('IPV4_NETWORK', '172.22.1') + '.249', decode_responses=True, port=6379, db=0)
+    r = redis.StrictRedis(host=os.getenv('HOSTNAME_REDIS'), decode_responses=True, port=6379, db=0)
     r.ping()
   except Exception as ex:
     print '%s - trying again in 3 seconds'  % (ex)

@@ -131,8 +131,10 @@ e.g. the following have `redis-mailcow` hard-coded as a name
 
 ## ToDo
 
-- [ ] check for hard-coded IP addresses, e.g. in `data/Dockerfiles/dovecot/syslog`: 
-  - `filter f_not_watchdog { not message ("172\.22\.1\.248): };`
+- [ ] check for hard-coded IP addresses, e.g. 
+  - [ ] in `data/Dockerfiles/dovecot/syslog`: 
+  	- `filter f_not_watchdog { not message ("172\.22\.1\.248): };`
+  - [ ] also in `data/Dockerfiles/netfilter/server.py`
   - [ ] these should be replaced with HOSTNAMES
 - [ ] check instances of `redis.sock`
 - [ ] check for other instances of `mysqld.sock`

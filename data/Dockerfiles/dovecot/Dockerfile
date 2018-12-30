@@ -99,6 +99,7 @@ RUN echo '25 * * * *  vmail /usr/local/bin/maildir_gc.sh >> /dev/console 2>&1' >
 RUN echo '30 1 * * *  root  /usr/local/bin/sa-rules.sh  >> /dev/console 2>&1' > /etc/cron.d/sa-rules
 COPY trim_logs.sh /usr/local/bin/trim_logs.sh
 COPY syslog-ng.conf /etc/syslog-ng/syslog-ng.conf
+RUN  sed -i "s|HOSTNAME_REDIS_PLACEHOLDER|$HOSTNAME_REDIS|g" /etc/syslog-ng/syslog-ng.conf
 COPY imapsync /usr/local/bin/imapsync
 COPY postlogin.sh /usr/local/bin/postlogin.sh
 COPY imapsync_cron.pl /usr/local/bin/imapsync_cron.pl

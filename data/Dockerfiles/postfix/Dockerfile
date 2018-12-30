@@ -44,6 +44,7 @@ COPY zeyple.py /usr/local/bin/zeyple.py
 COPY zeyple.conf /etc/zeyple.conf
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY syslog-ng.conf /etc/syslog-ng/syslog-ng.conf
+ARG HOSTNAME_REDIS
 RUN  sed -i "s|HOSTNAME_REDIS_PLACEHOLDER|$HOSTNAME_REDIS|g" /etc/syslog-ng/syslog-ng.conf
 COPY postfix.sh /opt/postfix.sh
 COPY rspamd-pipe-ham /usr/local/bin/rspamd-pipe-ham

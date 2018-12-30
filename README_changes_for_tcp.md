@@ -92,6 +92,9 @@ in most cases, the URL was also provided but we had to update the port
     ```
     - [x] where present it has been wrapped in an `if($CONNECT_METHOD == "socket"){ }`
 
+`data/web/inc/vars.inc.php`
+  - [x] added `$DBHOST` variable
+
 `data/web/inc/init_db.inc.php`
 `data/web/inc/prerequisites.inc.php`
   - [x] edited `$dsn` connection settings
@@ -113,6 +116,13 @@ edited following files to replace `redis-mailcow` with `$HOSTNAME_REDIS`
   - [x] `data/Dockerfiles/phpfpm/docker-entrypoint.sh
   - [x] `data/conf/rspamd/dynmaps/forwardinghosts.php`
   - [x] `data/conf/rspamd/meta_exporter/pipe.php`
+
+## containers not needed
+
+we are not starting the following containers as their functions are handled by the host:
+- [x] netfilter
+- [x] watchdog (disabled by `watchdog=N`)
+- [x] dockerapi 
  
 ## allow renaming of docker containers
 

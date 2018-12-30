@@ -23,7 +23,7 @@ $tfa = new RobThree\Auth\TwoFactorAuth($OTP_LABEL);
 
 // Redis
 $redis = new Redis();
-$redis->connect($HOSTNAME_REDIS, 6379);
+$redis->connect($redis_hostname, 6379);
 
 // PDO
 // Calculate offset
@@ -38,7 +38,7 @@ $redis->connect($HOSTNAME_REDIS, 6379);
 if ($CONNECT_METHOD == "socket") {
   $dsn = $database_type . ":unix_socket=" . $database_sock . ";dbname=" . $database_name;
 } else {
-  $dsn = $database_type . ':host=' . $DBHOST . ';dbname=' . $database_name;
+  $dsn = $database_type . ':host=' . $database_host . ';dbname=' . $database_name;
 }
 $opt = [
   PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -56,12 +56,14 @@ catch (PDOException $e) {
 <?php
 exit;
 }
-// Stop when dockerapi is not available
-if (fsockopen("tcp://dockerapi", 443, $errno, $errstr) === false) {
-?>
-<center style='font-family:sans-serif;'>Connection to dockerapi container failed.<br /><br />The following error was reported:<br/><?=$errno;?> - <?=$errstr;?></center>
-<?php
-exit;
+// Stop when dockerapi is not available (only stop if using socket connect method) 
+if ($connect_method == "socket") {
+  if (fsockopen("tcp://dockerapi", 443, $errno, $errstr) === false) {
+  ?>
+  <center style='font-family:sans-serif;'>Connection to dockerapi container failed.<br /><br />The following error was reported:<br/><?=$errno;?> - <?=$errstr;?></center>
+  <?php
+  exit;
+  }
 }
 
 function exception_handler($e) {

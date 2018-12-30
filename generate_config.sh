@@ -72,7 +72,7 @@ if [[ "$CONNECT_METHOD" == "socket" ]]; then
     DBCONN="--socket=${DBHOST}"
     RSCONN_SCK="--unix-socket /var/lib/rspamd/rspamd.sock"
 else
-    DBHOST="mysql"	
+    DBHOST="mysql"
     DBCONN="-h ${DBHOST}"
     RSCONN_SCK=""
 fi

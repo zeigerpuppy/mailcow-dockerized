@@ -75,7 +75,56 @@ else
     DBHOST="mysql"
     DBCONN="-h ${DBHOST}"
     RSCONN_SCK=""
+    echo "Please edit the mailcow.conf file and add your IP addresses for containers, then use this file as an .env file for docker-compose"
 fi
+
+# ------------------------------
+# Set Hostnames for machines
+# ------------------------------
+# allows setting names for machines more flexibly
+# not fully implemented yet in config files
+HOSTNAME_UNBOUND=mailcow-unbound
+IP_UNBOUND=172.18.18.100
+# mysql host is set with $DBHOST
+IP_MYSQL=172.18.18.101
+HOSTNAME_REDIS=mailcow-redis
+IP_REDIS=172.18.18.102
+HOSTNAME_CLAMD=mailcow-clamd
+IP_CLAMD=172.18.18.103
+HOSTNAME_RSPAMD=mailcow-rspamd
+IP_RSPAMD=172.18.18.104
+HOSTNAME_PHPFPM=mailcow-phpfpm
+IP_PHPFPM=172.18.18.105
+HOSTNAME_SOGO=mailcow-sogo
+IP_SOGO=172.18.18.106
+HOSTNAME_DOVECOT=mailcow-dovecot
+IP_DOVECOT=172.18.18.107
+HOSTNAME_POSTFIX=mailcow-postfix
+IP_POSTFIX=172.18.18.108
+HOSTNAME_MEMCACHED=mailcow-memcached
+IP_MEMCACHED=172.18.18.109
+HOSTNAME_NGINX=mailcow-nginx
+IP_NGINX=172.18.18.110
+HOSTNAME_ACME=mailcow-acme
+IP_ACME=172.18.18.111
+HOSTNAME_NETFILTER=mailcow-nefilter
+IP_NETFILTER=172.18.18.112
+HOSTNAME_WATCHDOG=mailcow-watchdog
+IP_WATCHDOG=172.18.18.113
+HOSTNAME_DOCKERAPI=mailcow-dockerapi
+IP_DOCKERAPI=172.18.18.114
+
+# set the permitted IPs for RSPAMDto listen to
+if [ "$CONNECT_METHOD" == "tcp" ]; then 
+  echo -e "secure_ip = "$IP_NGINX";\nsecure_ip = "$IP_POSTFIX";\nsecure_ip = "$IP_DOVECOT";\nsecure_ip = "$IP_SOGO";" > data/conf/rspamd/override.d/worker-controller.custom.inc
+else
+  rm data/conf/rspamd/override.d/worker-controller.custom.inc || true # continue if file doesn't exist
+fi
+
+
+########################################
+## Write out parameters to mailcow.conf
+########################################
 
 cat << EOF > mailcow.conf
 # -----------------------------
@@ -91,21 +140,36 @@ RSCONN_SCK=${DBCONN_CRL}
 # ------------------------------
 # allows setting names for machines more flexibly
 # not fully implemented yet in config files
-HOSTNAME_UNBOUND=unbound-mailcow
+HOSTNAME_UNBOUND=${HOSTNAME_UNBOUND}
+IP_UNBOUND=${IP_UNBOUND}
 # mysql host is set with $DBHOST
-HOSTNAME_REDIS=redis-mailcow
-HOSTNAME_CLAMD=clamd-mailcow
-HOSTNAME_RSPAMD=rspamd-mailcow
-HOSTNAME_PHPFPM=phpfpm-mailcow
-HOSTNAME_SOGO=sogo-mailcow
-HOSTNAME_DOVECOT=dovecot-mailcow
-HOSTNAME_POSTFIX=postfix-mailcow
-HOSTNAME_MEMCACHED=memcached-mailcow
-HOSTNAME_NGINX=nginx-mailcow
-HOSTNAME_ACME=acme-mailcow
-HOSTNAME_NETFILTER=nefilter-mailcow
-HOSTNAME_WATCHDOG=watchdow-mailcow
-HOSTNAME_DOCKERAPI=dockerapi-mailcow
+IP_MYSQL=${IP_MYSQL}
+HOSTNAME_REDIS=${HOSTNAME_REDIS}
+IP_REDIS=${IP_REDIS}
+HOSTNAME_CLAMD=${HOSTNAME_CLAMD}
+IP_CLAMD=${IP_CLAMD}
+HOSTNAME_RSPAMD=${HOSTNAME_RSPAMD}
+IP_RSPAMD=${IP_RSPAMD}
+HOSTNAME_PHPFPM=${HOSTNAME_PHPFPM}
+IP_PHPFPM=${IP_PHPFPM}
+HOSTNAME_SOGO=${HOSTNAME_SOGO}
+IP_SOGO=${IP_SOGO}
+HOSTNAME_DOVECOT=${HOSTNAME_DOVECOT}
+IP_DOVECOT=${IP_DOVECOT}
+HOSTNAME_POSTFIX=${HOSTNAME_POSTFIX}
+IP_POSTFIX=${IP_POSTFIX}
+HOSTNAME_MEMCACHED=${HOSTNAME_MEMCACHED}
+IP_MEMCACHED=${IP_MEMCACHED}
+HOSTNAME_NGINX=${HOSTNAME_NGINX}
+IP_NGINX=${IP_NGINX}
+HOSTNAME_ACME=${HOSTNAME_ACME}
+IP_ACME=${IP_ACME}
+HOSTNAME_NETFILTER=${HOSTNAME_NETFILTER}
+IP_NETFILTER=${IP_NETFILTER}
+HOSTNAME_WATCHDOG=${HOSTNAME_WATCHDOG}
+IP_WATCHDOG=${IP_WATCHDOG}
+HOSTNAME_DOCKERAPI=${HOSTNAME_DOCKERAPI}
+IP_DOCKERAPI=${IP_DOCKERAPI}
 
 # ------------------------------
 # mailcow web ui configuration

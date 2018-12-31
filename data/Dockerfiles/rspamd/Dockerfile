@@ -20,6 +20,11 @@ RUN apt-get update && apt-get install -y \
 	&& chown _rspamd:_rspamd /run/rspamd
 
 COPY settings.conf /etc/rspamd/settings.conf
+ARG CONNECT_METHOD
+ARG HOSTNAME_NGINX
+RUN echo "connecting with method: $CONNECT_METHOD to $HOSTNAME_NGINX"
+RUN if [ "$CONNECT_METHOD" = "tcp" ]; then sed -i "s|nginx|$HOSTNAME_NGINX|g" /etc/rspamd/settings.conf; fi
+
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
